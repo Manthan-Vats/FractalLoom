@@ -1,8 +1,8 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { LandingPage } from './components/LandingPage';
-import { ExplorePage } from './components/ExplorePage';
-import { GeneratorPage } from './components/GeneratorPage';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import LandingPage from "./components/LandingPage";
+import { ExplorePage } from "./components/ExplorePage";
+import { GeneratorPage } from "./components/GeneratorPage";
 
 function App() {
   return (
