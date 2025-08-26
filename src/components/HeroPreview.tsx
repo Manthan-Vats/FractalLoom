@@ -1,17 +1,4 @@
-// src/components/HeroPreview.tsx
 import React, { useEffect, useRef, useState } from "react";
-
-/**
- * HeroPreview.tsx
- * Progressive WebGL Mandelbrot preview with slider + play/pause + accessibility.
- *
- * - Renders a low-res quick pass then progressively increases iterations to 'target' for a sharpening effect.
- * - Subtle slow zoom + pan (disabled if prefers-reduced-motion).
- * - Clamps devicePixelRatio for performance.
- * - Pauses when offscreen (IntersectionObserver).
- *
- * Minimal UI: play/pause button and iteration slider (Low/Med/High).
- */
 
 const VERTEX_SRC = `
 attribute vec2 a_position;
@@ -22,7 +9,6 @@ void main() {
 }
 `;
 
-// WebGL1 fragment shader (GLSL ES 1.00). Iteration uniform controls detail.
 const FRAGMENT_SRC = `
 precision highp float;
 varying vec2 v_uv;
@@ -113,7 +99,7 @@ function createProgram(gl: WebGLRenderingContext, vsSource: string, fsSource: st
 }
 
 function clampDPR(dpr: number) {
-  return Math.max(1, Math.min(1.5, dpr)); // cap at 1.5 for preview
+  return Math.max(1, Math.min(1.5, dpr)); 
 }
 
 type Props = {
@@ -146,7 +132,6 @@ export default function HeroPreview({
     const canvas = canvasRef.current!;
     if (!canvas) return;
 
-    // create gl context (WebGL1 for wider compatibility)
     const gl = (canvas.getContext("webgl", { antialias: true }) ??
       canvas.getContext("experimental-webgl")) as WebGLRenderingContext | null;
     if (!gl) {
@@ -155,7 +140,6 @@ export default function HeroPreview({
     }
     glRef.current = gl;
 
-    // build program
     let program: WebGLProgram;
     try {
       program = createProgram(gl, VERTEX_SRC, FRAGMENT_SRC);
@@ -165,7 +149,6 @@ export default function HeroPreview({
     }
     programRef.current = program;
 
-    // set up fullscreen quad
     const posLoc = gl.getAttribLocation(program, "a_position");
     const posBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
@@ -176,7 +159,6 @@ export default function HeroPreview({
     gl.enableVertexAttribArray(posLoc);
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
-    // uniforms
     const uRes = gl.getUniformLocation(program, "u_resolution");
     const uCenter = gl.getUniformLocation(program, "u_center");
     const uScale = gl.getUniformLocation(program, "u_scale");
@@ -189,7 +171,6 @@ export default function HeroPreview({
     let baseScale = 3.0;
     let lastTime = performance.now();
 
-    // Resize handling using ResizeObserver
     const resize = () => {
       const dpr = clampDPR(window.devicePixelRatio || 1);
       const rect = canvas.getBoundingClientRect();
@@ -207,7 +188,6 @@ export default function HeroPreview({
     const ro = new (window as any).ResizeObserver?.(() => resize());
     if (ro) ro.observe(canvas);
 
-    // IntersectionObserver to pause when offscreen
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
@@ -221,7 +201,6 @@ export default function HeroPreview({
 
     // animation loop
     function render(now: number) {
-      // if paused or not visible, still requestFrame but skip heavy work
       if (!isVisible || !running) {
         rafRef.current = requestAnimationFrame(render);
         lastTime = now;
@@ -232,12 +211,10 @@ export default function HeroPreview({
 
       const t = (now - (startRef.current || now)) / 1000.0;
 
-      // compute animated center offset and scale (subtle)
       let centerX = baseCenter.x;
       let centerY = baseCenter.y;
       let scale = baseScale;
 
-      // animate only when not preferring reduced motion
       if (!prefersReduced) {
         const panRadiusX = 0.006; // small pan radius
         const panRadiusY = 0.003;
@@ -247,11 +224,9 @@ export default function HeroPreview({
         scale *= 0.98 + 0.02 * (0.5 + 0.5 * Math.sin(t * 0.06));
       }
 
-      // progressive iteration smoothing: move currentIterations toward target
       const current = currentIterations;
       let next = current;
       if (current < targetIterations) {
-        // ramp quickly but visually smooth
         next = Math.min(targetIterations, Math.round(current + Math.max(1, (targetIterations - current) * 0.22)));
       } else if (current > targetIterations) {
         next = targetIterations;
@@ -260,14 +235,12 @@ export default function HeroPreview({
         setCurrentIterations(next);
       }
 
-      // set uniforms
       if (uTime) gl.uniform1f(uTime, t);
       if (uCenter) gl.uniform2f(uCenter, centerX, centerY);
       if (uScale) gl.uniform1f(uScale, scale);
       if (uIterations) gl.uniform1i(uIterations, next);
       if (uColorShift) gl.uniform1f(uColorShift, Math.sin(t * 0.07) * 0.2);
 
-      // draw
       gl.clearColor(0.02, 0.03, 0.05, 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -276,12 +249,10 @@ export default function HeroPreview({
       lastTime = now;
     }
 
-    // start
     startRef.current = performance.now();
     rafRef.current = requestAnimationFrame(render);
 
     return () => {
-      // cleanup
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (ro) ro.disconnect();
       io.disconnect();
@@ -290,19 +261,14 @@ export default function HeroPreview({
       } catch (e) {}
       glRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running, targetIterations, isVisible]);
 
-  // when user changes targetIterations, quickly set currentIterations low so progressive effect shows
   useEffect(() => {
     setCurrentIterations((prev) => Math.min(prev, minIter));
-    // then progressive loop will ramp to target
   }, [targetIterations, minIter]);
 
-  // play/pause behavior
   const toggleRunning = () => setRunning((r) => !r);
 
-  // slider quick presets
   const setPreset = (level: "low" | "med" | "high") => {
     if (level === "low") setTargetIterations(60);
     else if (level === "med") setTargetIterations(140);
@@ -325,7 +291,6 @@ export default function HeroPreview({
           <div className="flex items-center gap-3 bg-black/40 rounded-full px-3 py-2">
             <span className="text-xs text-white/80 mr-2">Detail</span>
 
-            {/* Minimal 3-button preset UI to keep it clean */}
             <div className="flex items-center gap-2">
               <button
                 aria-pressed={targetIterations === 60}
@@ -365,7 +330,6 @@ export default function HeroPreview({
           </div>
         </div>
 
-        {/* top-right badge */}
         <div className="absolute top-3 right-3 bg-black/40 px-2 py-1 rounded-full text-xs text-white/80">live</div>
       </div>
     </div>

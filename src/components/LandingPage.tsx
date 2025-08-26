@@ -1,17 +1,6 @@
-// src/components/LandingPage.tsx
 import React from "react";
 import { Link } from "react-router-dom";
 import HeroPreview from "./HeroPreview";
-
-/**
- * Minimal Landing Page (updated)
- * - "Explore examples" moved next to "Open Generator" as a secondary CTA
- * - "See preview" removed
- * - Footer credit updated to "Manthan Vats"
- * - Clean spacing and modern minimal styling
- *
- * Exports both named and default to be compatible with existing imports.
- */
 
 export const LandingPage: React.FC = () => {
   return (
@@ -41,10 +30,8 @@ export const LandingPage: React.FC = () => {
         </div>
       </header>
 
-      {/* Hero */}
       <section className="py-20">
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left column: headline + CTAs */}
           <div>
             <p className="text-sm uppercase tracking-wide text-[#9daaf2] mb-4">
               Explore · Create · Understand
@@ -60,7 +47,7 @@ export const LandingPage: React.FC = () => {
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
-              {/* Primary CTA */}
+              ={" "}
               <Link
                 to="/generator"
                 className="inline-flex items-center gap-3 px-5 py-3 rounded-lg bg-gradient-to-r from-[#ff6a3d] to-[#f4db7d] text-[#081022] font-semibold shadow-sm"
@@ -68,8 +55,7 @@ export const LandingPage: React.FC = () => {
               >
                 Open Generator
               </Link>
-
-              {/* Secondary CTA: Explore examples (moved here) */}
+              ={" "}
               <Link
                 to="/explore"
                 className="inline-flex items-center gap-2 px-4 py-3 rounded-lg border border-white/10 text-white/90 bg-transparent text-sm hover:bg-white/3 focus:outline-none"
@@ -80,17 +66,14 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Right column: preview tile */}
           <div className="flex justify-center lg:justify-end">
             <div style={{ width: 520 }} className="w-full">
-              {/* Hero preview component (progressive WebGL preview) */}
               <HeroPreview className="w-full h-[320px]" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Small footer row with a single minimal contextual line (kept intentionally short) */}
       <section className="py-8 border-t border-white/6">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
           <div className="text-sm text-white/80 max-w-xl">
@@ -98,7 +81,6 @@ export const LandingPage: React.FC = () => {
             nature (ferns, Romanesco), technology (antennas), and art.
           </div>
 
-          {/* keep only a subtle "Learn more" link; examples are already in hero */}
           <div className="flex gap-4">
             <a
               href="https://en.wikipedia.org/wiki/Fractal"
@@ -112,7 +94,6 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Footer with credit to you */}
       <footer className="py-8 text-center text-sm text-white/70">
         <div className="max-w-6xl mx-auto px-6">
           © 2025 FractalLoom — designed & built by{" "}
