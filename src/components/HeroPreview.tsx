@@ -79,7 +79,11 @@ function createShader(gl: WebGLRenderingContext, source: string, type: number) {
   return shader;
 }
 
-function createProgram(gl: WebGLRenderingContext, vsSource: string, fsSource: string) {
+function createProgram(
+  gl: WebGLRenderingContext,
+  vsSource: string,
+  fsSource: string
+) {
   const vs = createShader(gl, vsSource, gl.VERTEX_SHADER);
   const fs = createShader(gl, fsSource, gl.FRAGMENT_SHADER);
   const program = gl.createProgram();
@@ -92,19 +96,18 @@ function createProgram(gl: WebGLRenderingContext, vsSource: string, fsSource: st
     gl.deleteProgram(program);
     throw new Error("Program link error: " + info);
   }
-  // shaders can be deleted after linking
   gl.deleteShader(vs);
   gl.deleteShader(fs);
   return program;
 }
 
 function clampDPR(dpr: number) {
-  return Math.max(1, Math.min(1.5, dpr)); 
+  return Math.max(1, Math.min(1.5, dpr)); // cap at 1.5 for preview
 }
 
 type Props = {
   className?: string;
-  minIter?: number; // starting iteration for progressive pass
+  minIter?: number; 
   defaultTarget?: number; // default target iterations for "Medium"
 };
 
@@ -120,13 +123,15 @@ export default function HeroPreview({
   const startRef = useRef<number | null>(null);
 
   const [running, setRunning] = useState(true);
-  const [targetIterations, setTargetIterations] = useState<number>(defaultTarget);
+  const [targetIterations, setTargetIterations] =
+    useState<number>(defaultTarget);
   const [currentIterations, setCurrentIterations] = useState<number>(minIter);
   const [isVisible, setIsVisible] = useState(true);
 
-  // detect prefers-reduced-motion
   const prefersReduced =
-    typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
     const canvas = canvasRef.current!;
@@ -152,7 +157,9 @@ export default function HeroPreview({
     const posLoc = gl.getAttribLocation(program, "a_position");
     const posBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-    const positions = new Float32Array([-1,-1, 1,-1, -1,1,  -1,1, 1,-1, 1,1]);
+    const positions = new Float32Array([
+      -1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1,
+    ]);
     gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
     gl.useProgram(program);
@@ -166,7 +173,6 @@ export default function HeroPreview({
     const uTime = gl.getUniformLocation(program, "u_time");
     const uColorShift = gl.getUniformLocation(program, "u_colorShift");
 
-    // initial state
     let baseCenter = { x: -0.6, y: 0.0 };
     let baseScale = 3.0;
     let lastTime = performance.now();
@@ -185,21 +191,35 @@ export default function HeroPreview({
     };
 
     resize();
-    const ro = new (window as any).ResizeObserver?.(() => resize());
-    if (ro) ro.observe(canvas);
 
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          setIsVisible(false);
-        } else {
-          setIsVisible(true);
-        }
-      });
-    }, { threshold: 0.5 });
+    const ROClass = (window as any).ResizeObserver;
+    let ro: any = null;
+    if (typeof ROClass === "function") {
+      try {
+        ro = new ROClass(() => resize());
+      } catch (e) {
+        ro = null;
+      }
+    } else {
+      window.addEventListener("resize", resize);
+    }
+
+    if (ro && typeof ro.observe === "function") ro.observe(canvas);
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            setIsVisible(false);
+          } else {
+            setIsVisible(true);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
     io.observe(canvas);
 
-    // animation loop
     function render(now: number) {
       if (!isVisible || !running) {
         rafRef.current = requestAnimationFrame(render);
@@ -210,7 +230,6 @@ export default function HeroPreview({
       resize();
 
       const t = (now - (startRef.current || now)) / 1000.0;
-
       let centerX = baseCenter.x;
       let centerY = baseCenter.y;
       let scale = baseScale;
@@ -220,14 +239,16 @@ export default function HeroPreview({
         const panRadiusY = 0.003;
         centerX += Math.cos(t * 0.12) * panRadiusX;
         centerY += Math.sin(t * 0.09) * panRadiusY;
-        // slow gentle zoom oscillation
         scale *= 0.98 + 0.02 * (0.5 + 0.5 * Math.sin(t * 0.06));
       }
 
       const current = currentIterations;
       let next = current;
       if (current < targetIterations) {
-        next = Math.min(targetIterations, Math.round(current + Math.max(1, (targetIterations - current) * 0.22)));
+        next = Math.min(
+          targetIterations,
+          Math.round(current + Math.max(1, (targetIterations - current) * 0.22))
+        );
       } else if (current > targetIterations) {
         next = targetIterations;
       }
@@ -254,7 +275,9 @@ export default function HeroPreview({
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (ro) ro.disconnect();
+      if (ro && typeof ro.disconnect === "function") ro.disconnect();
+      if (typeof ROClass !== "function")
+        window.removeEventListener("resize", resize);
       io.disconnect();
       try {
         if (programRef.current) gl.deleteProgram(programRef.current);
@@ -291,31 +314,40 @@ export default function HeroPreview({
           <div className="flex items-center gap-3 bg-black/40 rounded-full px-3 py-2">
             <span className="text-xs text-white/80 mr-2">Detail</span>
 
+            {/* Minimal 3-button preset UI to keep it clean */}
             <div className="flex items-center gap-2">
               <button
                 aria-pressed={targetIterations === 60}
                 onClick={() => setPreset("low")}
-                className={`text-xs px-2 py-1 rounded-md ${targetIterations === 60 ? "bg-white/10" : "bg-transparent"} text-white/90`}
+                className={`text-xs px-2 py-1 rounded-md ${
+                  targetIterations === 60 ? "bg-white/10" : "bg-transparent"
+                } text-white/90`}
               >
                 Low
               </button>
               <button
                 aria-pressed={targetIterations === 140}
                 onClick={() => setPreset("med")}
-                className={`text-xs px-2 py-1 rounded-md ${targetIterations === 140 ? "bg-white/10" : "bg-transparent"} text-white/90`}
+                className={`text-xs px-2 py-1 rounded-md ${
+                  targetIterations === 140 ? "bg-white/10" : "bg-transparent"
+                } text-white/90`}
               >
                 Medium
               </button>
               <button
                 aria-pressed={targetIterations === 300}
                 onClick={() => setPreset("high")}
-                className={`text-xs px-2 py-1 rounded-md ${targetIterations === 300 ? "bg-white/10" : "bg-transparent"} text-white/90`}
+                className={`text-xs px-2 py-1 rounded-md ${
+                  targetIterations === 300 ? "bg-white/10" : "bg-transparent"
+                } text-white/90`}
               >
                 High
               </button>
             </div>
 
-            <div className="text-xs text-white/60 ml-3">({currentIterations} it)</div>
+            <div className="text-xs text-white/60 ml-3">
+              ({currentIterations} it)
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -330,7 +362,9 @@ export default function HeroPreview({
           </div>
         </div>
 
-        <div className="absolute top-3 right-3 bg-black/40 px-2 py-1 rounded-full text-xs text-white/80">live</div>
+        <div className="absolute top-3 right-3 bg-black/40 px-2 py-1 rounded-full text-xs text-white/80">
+          live
+        </div>
       </div>
     </div>
   );

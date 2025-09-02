@@ -47,7 +47,6 @@ export const LandingPage: React.FC = () => {
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
-              ={" "}
               <Link
                 to="/generator"
                 className="inline-flex items-center gap-3 px-5 py-3 rounded-lg bg-gradient-to-r from-[#ff6a3d] to-[#f4db7d] text-[#081022] font-semibold shadow-sm"
@@ -55,7 +54,7 @@ export const LandingPage: React.FC = () => {
               >
                 Open Generator
               </Link>
-              ={" "}
+
               <Link
                 to="/explore"
                 className="inline-flex items-center gap-2 px-4 py-3 rounded-lg border border-white/10 text-white/90 bg-transparent text-sm hover:bg-white/3 focus:outline-none"
