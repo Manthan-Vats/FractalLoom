@@ -21,8 +21,6 @@
 
 Ever played around with those mathematical tree patterns? You know, the ones that look like they could be actual plants? That's basically what FractalLoom does - it lets you mess around with fractal math without having to understand all the scary equations behind it.
 
-I got obsessed with fractals after stumbling across some demos online. Turns out, you can create incredibly complex and beautiful patterns using just a few simple rules. The crazy part is how changing one tiny parameter can completely transform what you're looking at.
-
 This tool is for anyone who's curious about math but doesn't want to wade through textbooks. Maybe you're studying for an exam, or you're an artist looking for inspiration, or you just think math art is cool. Either way, you can create some pretty stunning stuff here.
 
 > _"Honestly, I built this because I kept getting lost in fractal rabbit holes at 2 AM. There's something weirdly satisfying about watching a simple tree pattern turn into something that looks like it belongs in a sci-fi movie. Figured other people might enjoy the same kind of mathematical procrastination."_
