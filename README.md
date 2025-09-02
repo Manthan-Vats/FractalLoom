@@ -11,7 +11,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5.3-3178c6.svg)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-[**Live Demo**](#) • [**Documentation**](#usage) • [**Contributing**](#contributing)
+[**Live Demo**](https://fractal-loom.vercel.app/) • [**Documentation**](#usage) • [**Contributing**](#contributing)
 
 </div>
 
@@ -20,8 +20,6 @@
 ## **What's This About?**
 
 Ever played around with those mathematical tree patterns? You know, the ones that look like they could be actual plants? That's basically what FractalLoom does - it lets you mess around with fractal math without having to understand all the scary equations behind it.
-
-I got obsessed with fractals after stumbling across some demos online. Turns out, you can create incredibly complex and beautiful patterns using just a few simple rules. The crazy part is how changing one tiny parameter can completely transform what you're looking at.
 
 This tool is for anyone who's curious about math but doesn't want to wade through textbooks. Maybe you're studying for an exam, or you're an artist looking for inspiration, or you just think math art is cool. Either way, you can create some pretty stunning stuff here.
 
@@ -32,8 +30,6 @@ This tool is for anyone who's curious about math but doesn't want to wade throug
 ## **How This Started**
 
 So I was procrastinating on some other project and found this awesome [Interactive Fractal Tree demo by Visnos](https://www.visnos.com/demos/fractal). Spent like 3 hours just moving sliders around, watching trees turn into spirals and back again. The interactivity was what hooked me - being able to see math change in real-time instead of just staring at static images in textbooks.
-
-The Visnos demo was great, but I kept wanting more. Like, what about the famous fractals I'd heard about? The Mandelbrot set, Julia sets, all that stuff. Plus I was learning React at the time and thought it would be a fun challenge to rebuild the tree generator from scratch and add more features.
 
 Started as a weekend project, obviously got way out of hand. Now it's got the interactive pattern generator (definitely inspired by Visnos but with my own twist), plus a whole section for exploring the classic mathematical fractals. Kind of became my go-to project whenever I wanted to experiment with new web dev techniques.
 
@@ -60,18 +56,6 @@ This is the main event. Eight sliders that control how your fractal grows. Sound
 - **Dense Forest** - Super complex layered stuff
 - **Crystalline** - Sharp and geometric
 
-### **Mathematical Fractal Explorer**
-
-The famous ones you might have heard about. Mandelbrot set, Julia sets, and some others. These are the fractals that mathematicians get excited about. Each one has its own weird properties and infinite complexity.
-
-### **Real-time Everything**
-
-Change a slider, see it update immediately. Export your creations as high-res images. Save your work. The usual stuff you'd expect from a modern web app.
-
-### **Actually Understanding What's Happening**
-
-I tried to explain the math without making it boring. Each fractal type has some background info so you're not just looking at pretty pictures without knowing why they work.
-
 ---
 
 ## **Tech Stack**
@@ -88,8 +72,6 @@ I tried to explain the math without making it boring. Each fractal type has some
 ![WebGL](https://img.shields.io/badge/WebGL-990000?style=for-the-badge&logo=webgl&logoColor=white)
 
 </div>
-
-React for the UI (obviously), TypeScript because I hate debugging JavaScript errors, Vite for fast development builds. React Router handles the navigation between different sections. Tailwind for styling without writing custom CSS. WebGL for the heavy lifting on fractal rendering - regular canvas was too slow for complex iterations. Lucide React for clean icons.
 
 ---
 
@@ -137,6 +119,8 @@ npm run preview
 
 ## **See It In Action**
 
+### _Live demo_ - https://fractal-loom.vercel.app/
+
 <div align="center">
 
 ![FractalLoom Interface](docs/screenshots/SS_1.png)
@@ -163,29 +147,9 @@ Pro tip: small changes in the angle sliders can create dramatically different re
 
 The fun part is there's no wrong way to do it. Just experiment until you find something that looks cool.
 
-### **Exploring the Math Fractals**
-
-The other section has the famous mathematical fractals. Pick one, then zoom around and see the infinite detail. The Mandelbrot set is probably the most well-known - those colorful boundaries are where the math gets interesting.
-
-Julia sets are similar but each one is different. The L-system ones (like the Barnsley Fern) show how simple rules can create complex organic-looking patterns.
-
 ### **Exporting Your Work**
 
-Found something you like? Hit the export button for a high-res PNG. Good for wallpapers, art projects, or just showing off to friends.
-
----
-
-## **What You Can Use This For**
-
-**Art projects:** The patterns make great backgrounds or design elements. Since they're mathematically generated, you get unique results every time.
-
-**Learning:** If you're studying fractals or math in general, this makes the abstract concepts more concrete. Way better than staring at equations in a textbook.
-
-**Teaching:** Teachers can use this to demonstrate mathematical concepts. Students can mess around with parameters and see what happens.
-
-**Just for fun:** Sometimes you just want to make cool-looking mathematical art. Nothing wrong with that.
-
----
+## Found something you like? Hit the export button for a high-res PNG. Good for wallpapers, art projects, or just showing off to friends.
 
 ## **The Math Behind It**
 
